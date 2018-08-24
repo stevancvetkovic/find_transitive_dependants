@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>tech.simpledevops.sample</groupId>
-  <artifactId>reactor</artifactId>
+  <parent>
+    <artifactId>reactor</artifactId>
+    <groupId>tech.simpledevops.sample</groupId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <groupId>tech.simpledevops.sample.actions</groupId>
+  <artifactId>actions</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>reactor</name>
+  <name>actions</name>
   <modules>
-    <module>framework</module>
-    <module>actions</module>
+    <module>install-apache</module>
+    <module>install-mysql</module>
   </modules>
 </project>
