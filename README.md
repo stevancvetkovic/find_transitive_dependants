@@ -14,11 +14,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-Incremental Maven Release Plugin
+Incremental Release Maven Plugin
 ============
 
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven.svg?label=License)][license]
-[![Build Status](https://travis-ci.org/stevancvetkovic/incremental-maven-release-plugin.svg?branch=master)][build]
+[![Build Status](https://travis-ci.org/stevancvetkovic/incremental-release-maven-plugin.svg?branch=master)][build]
 
 This plugin adds ability to manage Maven multi-module projects in order to support incremental releases of changed child modules. This includes automatic discovery of changed modules based on SCM log as well as setting new versions and building only changed POMs and their transitive dependents.
 
@@ -29,4 +29,4 @@ License
 This code is under the [Apache Licence v2][license]
 
 [license]: https://www.apache.org/licenses/LICENSE-2.0
-[build]: https://travis-ci.org/stevancvetkovic/incremental-maven-release-plugin
+[build]: https://travis-ci.org/stevancvetkovic/incremental-release-maven-plugin

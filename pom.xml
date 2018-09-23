@@ -5,15 +5,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>tech.simpledevops.maven.plugin</groupId>
-  <artifactId>incremental-maven-release-plugin</artifactId>
-  <version>1.1</version>
+  <groupId>tech.simpledevops.maven.plugins</groupId>
+  <artifactId>incremental-release-maven-plugin</artifactId>
+  <version>1.0</version>
   <packaging>maven-plugin</packaging>
 
-  <name>Incremental Maven Release Plugin</name>
+  <name>Incremental Release Maven Plugin</name>
 
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://www.github.com/stevancvetkovic/incremental-release-maven-plugin</url>
 
   <prerequisites>
     <maven>${maven.version}</maven>
@@ -94,6 +93,16 @@
         <artifactId>aether-transport-http</artifactId>
         <version>1.1.0</version>
     </dependency>
+    <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-api</artifactId>
+       <version>1.7.25</version>
+   </dependency>
+   <dependency>
+       <groupId>org.slf4j</groupId>
+       <artifactId>slf4j-log4j12</artifactId>
+       <version>1.7.25</version>
+   </dependency>
   </dependencies>
 
   <build>
