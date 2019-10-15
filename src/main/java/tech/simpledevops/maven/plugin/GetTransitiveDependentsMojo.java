@@ -32,84 +32,91 @@ import org.apache.maven.project.ProjectBuildingResult;
 import org.eclipse.aether.RepositorySystemSession;
 
 @Mojo(name = "get-transitive-deps",
-        requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
-        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+    requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+    requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 
 public class GetTransitiveDependentsMojo extends AbstractMojo {
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+  @Parameter(defaultValue = "${project}", readonly = true, required = true)
+  private MavenProject project;
 
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
+  @Parameter(defaultValue = "${session}", readonly = true, required = true)
+  private MavenSession session;
 
-    @Parameter(defaultValue = "${repositorySystemSession}")
-    private RepositorySystemSession repoSession;
+  @Parameter(defaultValue = "${repositorySystemSession}")
+  private RepositorySystemSession repoSession;
 
-    @Component
-    private ProjectBuilder mavenProjectBuilder;
+  @Component
+  private ProjectBuilder mavenProjectBuilder;
 
-    private List<Model> allModels = new ArrayList<>();
-    private Collection<MavenProject> allMavenProjects = new HashSet<MavenProject>();
+  private List<Model> allModels = new ArrayList<>();
+  private Collection<MavenProject> allMavenProjects = new HashSet<MavenProject>();
 
-    private Model readPomFile(File basedir) throws Exception {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
+  private Model readPomFile(File basedir) throws Exception {
+    MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        File pom = new File(basedir, "pom.xml");
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(new FileInputStream(pom), "UTF-8"));
-        Model model = reader.read(in);
-        model.setPomFile(pom);
+    File pom = new File(basedir, "pom.xml");
+    BufferedReader in = new BufferedReader(
+        new InputStreamReader(new FileInputStream(pom), "UTF-8"));
+    Model model = reader.read(in);
+    model.setPomFile(pom);
 
-        return model;
+    return model;
+  }
+
+  private void recursivelyFindAllModules(File baseDir) throws Exception {
+    Model pomFile = readPomFile(baseDir);
+    allModels.add(pomFile);
+
+    for (String module : pomFile.getModules()) {
+      File modulePath = new File(baseDir, module);
+      recursivelyFindAllModules(modulePath);
     }
+  }
 
-    private void recursivelyFindAllModules(File baseDir) throws Exception {
-        Model pomFile = readPomFile(baseDir);
-        allModels.add(pomFile);
+  private void findAllMavenProjects() throws Exception {
+    recursivelyFindAllModules(project.getBasedir());
+    for (Model module : allModels) {
+      allMavenProjects.add(getMavenProject(module.getPomFile()));
+    }
+  }
 
-        for (String module : pomFile.getModules()) {
-            File modulePath = new File(baseDir, module);
-            recursivelyFindAllModules(modulePath);
+  private MavenProject getMavenProject(File pomFile) throws ProjectBuildingException {
+    ProjectBuildingRequest projectBuildingRequest =
+        session.getProjectBuildingRequest().setRepositorySession(repoSession);
+
+    ProjectBuildingResult build = mavenProjectBuilder.build(pomFile, projectBuildingRequest);
+
+    return build.getProject();
+  }
+
+  private List<MavenProject> findTransitiveDependants(MavenProject myProject) throws Exception {
+    ProjectDependencyGraph graph = new DefaultProjectDependencyGraph(allMavenProjects);
+    return graph.getDownstreamProjects(myProject, true);
+  }
+
+  private void printErrorMessage(Exception e) {
+    System.out.println(e.getMessage());
+  }
+
+  /*** Summary: Executes the main plugin method.
+   * @throws MojoExecutionException
+   ***/
+  public void execute() throws MojoExecutionException {
+    try {
+      findAllMavenProjects();
+
+      for (MavenProject project : allMavenProjects) {
+        System.out.println("Transitive dependants of " + project.getArtifactId());
+        List<MavenProject> transitiveDependants = findTransitiveDependants(project);
+
+        for (MavenProject dependentProject : transitiveDependants) {
+          System.out.println("\t" + dependentProject.getArtifactId());
         }
+        System.out.println("\n");
+      }
+    } catch (Exception e) {
+      printErrorMessage(e);
     }
-
-    private void findAllMavenProjects() throws Exception {
-        recursivelyFindAllModules(project.getBasedir());
-        for (Model module : allModels) allMavenProjects.add(getMavenProject(module.getPomFile()));
-    }
-
-    private MavenProject getMavenProject(File pomFile) throws ProjectBuildingException {
-        ProjectBuildingRequest projectBuildingRequest = session.getProjectBuildingRequest().setRepositorySession(repoSession);
-        ProjectBuildingResult build = mavenProjectBuilder.build(pomFile, projectBuildingRequest);
-
-        return build.getProject();
-    }
-
-    private List<MavenProject> findTransitiveDependants(MavenProject myProject) throws Exception {
-        ProjectDependencyGraph graph = new DefaultProjectDependencyGraph(allMavenProjects);
-        return graph.getDownstreamProjects(myProject, true);
-    }
-
-    private void printErrorMessage(Exception e) {
-        System.out.println(e.getMessage());
-    }
-
-    public void execute() throws MojoExecutionException {
-        try {
-            findAllMavenProjects();
-
-            for (MavenProject project : allMavenProjects) {
-                System.out.println("Transitive dependants of " + project.getArtifactId());
-                List<MavenProject> transitiveDependants = findTransitiveDependants(project);
-
-                for (MavenProject dependentProject : transitiveDependants) {
-                    System.out.println("\t" + dependentProject.getArtifactId());
-                }
-                System.out.println("\n");
-            }
-        } catch (Exception e) {
-            printErrorMessage(e);
-        }
-    }
+  }
 }
