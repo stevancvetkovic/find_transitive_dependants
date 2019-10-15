@@ -145,6 +145,10 @@
           <artifactId>maven-invoker-plugin</artifactId>
           <version>3.2.1</version>
         </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.7.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -187,6 +191,16 @@
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.5</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
   <profiles>
     <profile>
