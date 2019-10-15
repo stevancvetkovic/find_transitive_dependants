@@ -10,7 +10,7 @@ import java.io.File;
 
 public class GetTransitiveDependentsTest {
     @Rule
-    public MojoRule rule = new MojoRule()
+    public final MojoRule rule = new MojoRule()
     {
         @Override
         protected void before() throws Throwable {}

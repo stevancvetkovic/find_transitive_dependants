@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,15 +50,15 @@ public class GetTransitiveDependentsMojo extends AbstractMojo {
   @Component
   private ProjectBuilder mavenProjectBuilder;
 
-  private List<Model> allModels = new ArrayList<>();
-  private Collection<MavenProject> allMavenProjects = new HashSet<MavenProject>();
+  private final List<Model> allModels = new ArrayList<>();
+  private final Collection<MavenProject> allMavenProjects = new HashSet<MavenProject>();
 
   private Model readPomFile(File basedir) throws Exception {
     MavenXpp3Reader reader = new MavenXpp3Reader();
 
     File pom = new File(basedir, "pom.xml");
     BufferedReader in = new BufferedReader(
-        new InputStreamReader(new FileInputStream(pom), "UTF-8"));
+        new InputStreamReader(new FileInputStream(pom), StandardCharsets.UTF_8));
     Model model = reader.read(in);
     model.setPomFile(pom);
 
@@ -99,8 +100,8 @@ public class GetTransitiveDependentsMojo extends AbstractMojo {
     System.out.println(e.getMessage());
   }
 
-  /*** Summary: Executes the main plugin method.
-   * @throws MojoExecutionException
+  /**
+   * Summary: Executes the main plugin method.
    ***/
   public void execute() throws MojoExecutionException {
     try {
