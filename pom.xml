@@ -189,6 +189,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-checkstyle-plugin</artifactId>
+      <version>3.1.0</version>
+      <configuration>
+        <configLocation>google_checks.xml</configLocation>
+      </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -210,6 +218,11 @@
             </reports>
           </reportSet>
         </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jxr-plugin</artifactId>
+        <version>2.3</version>
       </plugin>
     </plugins>
   </reporting>
